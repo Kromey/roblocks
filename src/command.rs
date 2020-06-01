@@ -13,14 +13,45 @@ pub struct Command {
 }
 
 impl Command {
-    pub fn stdin() -> Result<(), io::Error> {
+    /// Reads commands from the supplied buffer
+    ///
+    /// This will read until it reaches the command "quit".
+    ///
+    /// # Examples
+    ///
+    /// Read from standard input:
+    ///
+    /// ```no_run
+    /// use std::io::stdin;
+    /// use roblocks::Command;
+    ///
+    /// let stdin = stdin();
+    /// let mut locked = stdin.lock();
+    ///
+    /// Command::read(&mut locked);
+    /// ```
+    ///
+    /// Read from a file:
+    ///
+    /// ```no_run
+    /// use std::io::BufReader;
+    /// use std::fs::File;
+    /// use roblocks::Command;
+    ///
+    /// let f = File::open("commands.txt").unwrap();
+    /// let mut file_buf = BufReader::new(f);
+    ///
+    /// Command::read(&mut file_buf);
+    /// ```
+    pub fn read(buf: &mut impl io::BufRead) -> Result<(), io::Error> {
         let mut input = String::new();
 
         loop {
             input.clear();
-            io::stdin().read_line(&mut input)?;
+            buf.read_line(&mut input)?;
 
             match input.trim() {
+                "" => continue,
                 "quit" => break,
                 cmd => println!("{:?}", Command::from(cmd)),
             };

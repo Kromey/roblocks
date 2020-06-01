@@ -1,5 +1,9 @@
+use std::io::stdin;
 use roblocks::Command;
 
 fn main() {
-    Command::stdin();
+    let stdin = stdin();
+    let mut handle = stdin.lock();
+
+    Command::read(&mut handle);
 }
