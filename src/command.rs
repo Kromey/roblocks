@@ -6,13 +6,14 @@ pub enum Target {
 
 #[derive(Debug)]
 pub enum Command {
+    Continue,
     Quit,
     Move(Target,Target),
     PrintTable,
 }
 
-impl From<&str> for Command {
-    fn from(s: &str) -> Command {
+impl Command {
+    fn move_command(s: &str) -> Command {
         let cmd: Vec<&str> = s
             .trim()
             .split_whitespace()
@@ -31,5 +32,16 @@ impl From<&str> for Command {
         };
 
         Command::Move(item, dest)
+    }
+}
+
+impl From<&String> for Command {
+    fn from(s: &String) -> Command {
+        match s.to_lowercase().trim() {
+            "" => Command::Continue,
+            "quit" => Command::Quit,
+            "print" => Command::PrintTable,
+            move_cmd => Command::move_command(move_cmd),
+        }
     }
 }
