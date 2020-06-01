@@ -65,7 +65,10 @@ impl Robot {
 
             match cmd {
                 Command::Continue => continue,
-                Command::Quit => break,
+                Command::Quit => {
+                    self.print_table();
+                    break;
+                },
                 Command::PrintTable => self.print_table(),
                 Command::Move(from,to) => println!("Moving from {:?} to {:?}", from, to),
             };
