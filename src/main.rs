@@ -1,9 +1,9 @@
 use std::io::stdin;
-use roblocks::Command;
+use roblocks::Robot;
 
 fn main() {
     let stdin = stdin();
     let mut handle = stdin.lock();
 
-    Command::read(&mut handle);
+    Robot::run(&mut handle).unwrap();
 }
