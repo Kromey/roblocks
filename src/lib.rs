@@ -52,7 +52,7 @@ impl Robot {
         Robot { table }.main_loop(&mut buf)
     }
 
-    fn main_loop(&self, mut buf: &mut impl io::BufRead) -> Result<(), io::Error> {
+    fn main_loop(&self, buf: &mut impl io::BufRead) -> Result<(), io::Error> {
         let mut input = String::with_capacity(20);
 
         loop {
