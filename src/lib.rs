@@ -1,6 +1,6 @@
 mod command;
 
-pub use command::Command;
+use command::Command;
 use std::io;
 
 pub struct Robot {
