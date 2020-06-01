@@ -66,11 +66,21 @@ impl Robot {
             match cmd {
                 Command::Continue => continue,
                 Command::Quit => break,
-                Command::PrintTable => println!("{:?}", self.table),
+                Command::PrintTable => self.print_table(),
                 Command::Move(from,to) => println!("Moving from {:?} to {:?}", from, to),
             };
         };
 
         Ok(())
+    }
+
+    fn print_table(&self) {
+        self.table.iter().enumerate().for_each(|(i, pile)| {
+            print!("{}:", i);
+            if pile.len() > 0 {
+                pile.iter().for_each(|block| print!(" {}", block));
+            };
+            println!("");
+        });
     }
 }
