@@ -59,7 +59,7 @@ impl Robot {
             input.clear();
             buf.read_line(&mut input)?;
 
-            let cmd = match input.trim() {
+            let cmd = match input.to_lowercase().trim() {
                 "" => continue,
                 "quit" => Command::Quit,
                 "print" => Command::PrintTable,
