@@ -15,7 +15,6 @@ pub enum Command {
 impl Command {
     fn move_command(s: &str) -> Command {
         let cmd: Vec<&str> = s
-            .trim()
             .split_whitespace()
             .collect();
 
