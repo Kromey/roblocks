@@ -28,17 +28,7 @@ impl Table {
     }
 
     pub fn pile(&mut self, from: usize) -> Stack {
-        if let Some((i, pile)) = self.table
-            .iter_mut()
-            .find_map(|pile| {
-                let (i,_) = pile
-                    .iter()
-                    .enumerate()
-                    .find(|(_, &block)| block == from)?;
-
-                Some((i, pile))
-            })
-        {
+        if let Some((i, pile)) = self.find_pile(from) {
             let moving = pile.split_off(i);
             println!("Moving {:?}; leaving behind {:?}", moving, pile);
 
@@ -49,5 +39,18 @@ impl Table {
         } else {
             panic!("Block not found: {}", from);
         }
+    }
+
+    fn find_pile(&mut self, target: usize) -> Option<(usize, &mut Vec<usize>)> {
+        self.table
+            .iter_mut()
+            .find_map(|pile| {
+                let (i,_) = pile
+                    .iter()
+                    .enumerate()
+                    .find(|(_, &block)| block == target)?;
+
+                Some((i, pile))
+            })
     }
 }
