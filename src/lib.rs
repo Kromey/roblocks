@@ -51,7 +51,7 @@ impl Robot {
         Robot { table: Table::new(table_size) }.main_loop(&mut buf)
     }
 
-    fn main_loop(&self, buf: &mut impl io::BufRead) -> Result<(), io::Error> {
+    fn main_loop(&mut self, buf: &mut impl io::BufRead) -> Result<(), io::Error> {
         let mut input = String::with_capacity(20);
 
         loop {
@@ -69,7 +69,7 @@ impl Robot {
                             break;
                         },
                         Command::PrintTable => self.print_table(),
-                        Command::Move(from,to) => println!("Moving from {:?} to {:?}", from, to),
+                        Command::Move(from,to) => self.handle_move(from, to),
                     };
                 },
                 Err(err) => {
@@ -87,5 +87,16 @@ impl Robot {
 
     fn print_table(&self) {
         self.table.print();
+    }
+
+    fn handle_move(&mut self, from: command::Target, to: command::Target) {
+        match (from, to) {
+            (command::Target::Pile(from), command::Target::Pile(to)) => {
+                self.table.pile(from).over(to);
+            },
+            (from, to) => {
+                println!("{:?}, {:?}", from, to);
+            },
+        };
     }
 }
