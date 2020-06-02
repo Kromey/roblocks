@@ -25,6 +25,10 @@ impl Command {
             .split_whitespace()
             .collect();
 
+        if cmd.len() != 4 {
+            return Err(CommandError::BadCommand(s.into()));
+        }
+
         let item_id = cmd[1].parse()?;
         let dest_id = cmd[3].parse()?;
 

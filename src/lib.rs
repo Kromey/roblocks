@@ -1,7 +1,7 @@
 mod command;
 mod table;
 
-use command::Command;
+use command::{Command, CommandError};
 use std::convert::TryFrom;
 use std::io;
 use table::Table;
@@ -58,18 +58,27 @@ impl Robot {
             input.clear();
             buf.read_line(&mut input)?;
 
-            let cmd = Command::try_from(&input).unwrap();
+            match Command::try_from(&input) {
+                Ok(cmd) => {
+                    println!("Command: {:?}", cmd);
 
-            println!("Command: {:?}", cmd);
-
-            match cmd {
-                Command::Continue => continue,
-                Command::Quit => {
-                    self.print_table();
-                    break;
+                    match cmd {
+                        Command::Continue => continue,
+                        Command::Quit => {
+                            self.print_table();
+                            break;
+                        },
+                        Command::PrintTable => self.print_table(),
+                        Command::Move(from,to) => println!("Moving from {:?} to {:?}", from, to),
+                    };
                 },
-                Command::PrintTable => self.print_table(),
-                Command::Move(from,to) => println!("Moving from {:?} to {:?}", from, to),
+                Err(err) => {
+                    match err {
+                        CommandError::BadBlockId(id) => eprintln!("Invalid block id: {}", id),
+                        CommandError::BadCommand(cmd) => eprintln!("Invalid command: {}", cmd),
+                        CommandError::ImpossibleMove => eprintln!("Cannot move a block onto/over itself"),
+                    };
+                },
             };
         };
 
