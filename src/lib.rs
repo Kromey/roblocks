@@ -1,10 +1,12 @@
 mod command;
+mod table;
 
 use command::Command;
 use std::io;
+use table::Table;
 
 pub struct Robot {
-    table: Vec<Vec<usize>>,
+    table: Table,
 }
 
 impl Robot {
@@ -45,11 +47,7 @@ impl Robot {
         let table_size: usize = setup.trim().parse().unwrap();
         println!("Table size: {}", table_size);
 
-        let table: Vec<Vec<usize>> = (0..table_size)
-            .map(|i| vec![i])
-            .collect();
-
-        Robot { table }.main_loop(&mut buf)
+        Robot { table: Table::new(table_size) }.main_loop(&mut buf)
     }
 
     fn main_loop(&self, buf: &mut impl io::BufRead) -> Result<(), io::Error> {
@@ -78,12 +76,6 @@ impl Robot {
     }
 
     fn print_table(&self) {
-        self.table.iter().enumerate().for_each(|(i, pile)| {
-            print!("{}:", i);
-            if pile.len() > 0 {
-                pile.iter().for_each(|block| print!(" {}", block));
-            };
-            println!("");
-        });
+        self.table.print();
     }
 }
