@@ -83,13 +83,23 @@ impl Robot {
     /// ```
     pub fn run(mut buf: &mut impl io::BufRead) -> Result<(), io::Error> {
         // Read one line of setup input to determine the table size
-        let mut setup = String::new();
-        buf.read_line(&mut setup)?;
+        // Reading in a loop so we can re-prompt the user if they enter an invalid value
+        loop {
+            let mut setup = String::new();
+            buf.read_line(&mut setup)?;
 
-        let table_size: usize = setup.trim().parse().unwrap();
+            if let Ok(table_size) = setup.trim().parse::<usize>() {
+                if table_size == 0 {
+                    eprintln!("ERROR! Table size must be greater than 0");
+                    continue;
+                }
 
-        // Create a Robot instance containing a Table of the specified size, and run it
-        Robot { table: Table::new(table_size) }.main_loop(&mut buf)
+                // Create a Robot instance containing a Table of the specified size, and run it
+                return Robot { table: Table::new(table_size) }.main_loop(&mut buf);
+            } else {
+                eprintln!("ERROR! Please enter the desired table size as a positive integer");
+            }
+        }
     }
 
     /// The main program loop
