@@ -2,6 +2,7 @@ mod command;
 mod table;
 
 use command::Command;
+use std::convert::TryFrom;
 use std::io;
 use table::Table;
 
@@ -57,7 +58,7 @@ impl Robot {
             input.clear();
             buf.read_line(&mut input)?;
 
-            let cmd = Command::from(&input);
+            let cmd = Command::try_from(&input).unwrap();
 
             println!("Command: {:?}", cmd);
 

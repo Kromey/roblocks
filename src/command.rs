@@ -1,3 +1,10 @@
+mod error;
+
+pub use error::CommandError;
+use std::convert::TryFrom;
+
+type CommandResult = std::result::Result<Command, CommandError>;
+
 #[derive(Debug)]
 pub enum Target {
     Block(usize),
@@ -13,34 +20,45 @@ pub enum Command {
 }
 
 impl Command {
-    fn move_command(s: &str) -> Command {
+    fn move_command(s: &str) -> CommandResult {
         let cmd: Vec<&str> = s
             .split_whitespace()
             .collect();
 
+        let item_id = cmd[1].parse()?;
+        let dest_id = cmd[3].parse()?;
+
+        if item_id == dest_id {
+            return Err(CommandError::ImpossibleMove);
+        }
+
         let item = match cmd[0] {
-            "move" => Target::Block(cmd[1].parse().unwrap()),
-            "pile" => Target::Pile(cmd[1].parse().unwrap()),
-            _ => panic!("Bad input!"),
+            "move" => Target::Block(item_id),
+            "pile" => Target::Pile(item_id),
+            s => return Err(CommandError::BadCommand(s.into())),
         };
 
         let dest = match cmd[2] {
-            "onto" => Target::Block(cmd[3].parse().unwrap()),
-            "over" => Target::Pile(cmd[3].parse().unwrap()),
-            _ => panic!("Bad input!"),
+            "onto" => Target::Block(dest_id),
+            "over" => Target::Pile(dest_id),
+            s => return Err(CommandError::BadCommand(s.into())),
         };
 
-        Command::Move(item, dest)
+        Ok(Command::Move(item, dest))
     }
 }
 
-impl From<&String> for Command {
-    fn from(s: &String) -> Command {
-        match s.to_lowercase().trim() {
+impl TryFrom<&String> for Command {
+    type Error = CommandError;
+
+    fn try_from(s: &String) -> CommandResult {
+        let cmd = match s.to_lowercase().trim() {
             "" => Command::Continue,
             "quit" => Command::Quit,
             "print" => Command::PrintTable,
-            move_cmd => Command::move_command(move_cmd),
-        }
+            move_cmd => Command::move_command(move_cmd)?,
+        };
+
+        Ok(cmd)
     }
 }
