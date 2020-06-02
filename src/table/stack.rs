@@ -23,6 +23,33 @@ impl Stack<'_> {
         }
     }
 
+    pub fn onto(mut self, to: usize) {
+        if let Some((to_slot, _)) = self.table
+            .iter()
+            .enumerate()
+            .find(|(_, pile)| {
+                pile.iter().any(|&block| block == to)
+            })
+        {
+            if to_slot != self.from_slot {
+                println!("Moving from slot {} to slot {}", self.from_slot, to_slot);
+                let mut moving = self.get_moving_pile();
+                let mut returning = vec![];
+
+                loop {
+                    if to == *self.table[to_slot].last().unwrap() {
+                        break;
+                    } else {
+                        returning.push(self.table[to_slot].pop().unwrap());
+                    }
+                }
+
+                self.return_blocks(returning);
+                self.table[to_slot].append(&mut moving);
+            }
+        }
+    }
+
     fn return_blocks(&mut self, mut blocks: Vec<usize>) {
         for block in blocks.drain(..) {
             self.table[block].push(block);

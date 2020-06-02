@@ -97,8 +97,11 @@ impl Robot {
             (command::Target::Block(from), command::Target::Pile(to)) => {
                 self.table.block(from).over(to);
             },
-            (from, to) => {
-                println!("{:?}, {:?}", from, to);
+            (command::Target::Pile(from), command::Target::Block(to)) => {
+                self.table.pile(from).onto(to);
+            },
+            (command::Target::Block(from), command::Target::Block(to)) => {
+                self.table.block(from).onto(to);
             },
         };
     }
