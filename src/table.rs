@@ -28,18 +28,19 @@ impl Table {
     }
 
     pub fn pile(&mut self, from: usize) -> Stack {
-        if let Some((slot, start, end)) = self.find_pile(from) {
+        if let Some((slot, block_idx)) = self.find_pile(from) {
             Stack {
                 table: &mut self.table,
                 from_slot: slot,
-                from_range: (start, end),
+                from_idx: block_idx,
+                move_pile: true,
             }
         } else {
             panic!("Block not found: {}", from);
         }
     }
 
-    fn find_pile(&self, target: usize) -> Option<(usize, usize, usize)> {
+    fn find_pile(&self, target: usize) -> Option<(usize, usize)> {
         self.table
             .iter()
             .enumerate()
@@ -49,7 +50,7 @@ impl Table {
                     .enumerate()
                     .find(|(_, &block)| block == target)?;
 
-                Some((slot, idx, pile.len()))
+                Some((slot, idx))
             })
     }
 }
