@@ -40,6 +40,19 @@ impl Table {
         }
     }
 
+    pub fn block(&mut self, from: usize) -> Stack {
+        if let Some((slot, block_idx)) = self.find_pile(from) {
+            Stack {
+                table: &mut self.table,
+                from_slot: slot,
+                from_idx: block_idx,
+                move_pile: false,
+            }
+        } else {
+            panic!("Block not found: {}", from);
+        }
+    }
+
     fn find_pile(&self, target: usize) -> Option<(usize, usize)> {
         self.table
             .iter()

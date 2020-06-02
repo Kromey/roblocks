@@ -23,11 +23,21 @@ impl Stack<'_> {
         }
     }
 
-    fn get_moving_pile(&mut self) -> Vec<usize> {
-        if self.move_pile {
-            self.table[self.from_slot].split_off(self.from_idx)
-        } else {
-            vec![]
+    fn return_blocks(&mut self, mut blocks: Vec<usize>) {
+        for block in blocks.drain(..) {
+            self.table[block].push(block);
         }
+    }
+
+    fn get_moving_pile(&mut self) -> Vec<usize> {
+        if !self.move_pile {
+            let drain_from = self.from_idx + 1;
+            if drain_from < self.table[self.from_slot].len() {
+                let blocks: Vec<usize> = self.table[self.from_slot].drain(drain_from..).collect();
+                self.return_blocks(blocks);
+            }
+        }
+
+        self.table[self.from_slot].split_off(self.from_idx)
     }
 }
